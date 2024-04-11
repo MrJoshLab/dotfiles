@@ -1,13 +1,39 @@
 local vim = vim
-local lspconfig = require 'lspconfig'
+
+require('nvim-lsp-installer').setup({
+  log_level = vim.log.levels.DEBUG,
+  ui = {
+    icons = {
+      server_installed = '✓',
+      server_pending = '➜',
+      server_uninstalled = '✗',
+    },
+  },
+})
+
+local lspconfig = require("lspconfig")
+
 local util = require 'lspconfig.util'
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 --local function on_attach(client, bufnr)
 local function on_attach()
   --require'lsp_compl'.attach(client, bufnr, { server_side_fuzzy_completion = true })
 end
+
+lspconfig.pylsp.setup{
+  settings = {
+    pylsp = {
+      plugins = {
+        pycodestyle = {
+          ignore = {'W391'},
+          maxLineLength = 100
+        }
+      }
+    }
+  }
+}
 
 lspconfig.rust_analyzer.setup {
   cmd = {"/Users/josh/.local/share/nvim/lsp_servers/rust/rust-analyzer"},
@@ -15,8 +41,9 @@ lspconfig.rust_analyzer.setup {
 }
 
 --lspconfig.yamlls.setup{
-  --cmd = {"/Users/josh/.local/share/nvim/lsp_servers/yaml/node_modules/yaml-language-server/bin/yaml-language-server"},
+  --capabilities = capabilities,
   --on_attach=on_attach,
+  --cmd = {"/Users/josh/.local/share/nvim/lsp_servers/yamlls/node_modules/yaml-language-server/bin/yaml-language-server"},
 --}
 
 require'lspconfig'.html.setup {
@@ -40,30 +67,57 @@ require'lspconfig'.cssmodules_ls.setup{
 lspconfig.gopls.setup{
   on_attach=on_attach,
   filetypes = { "go", "gomod" },
-  cmd = {"/Users/josh/.bin/gopls", "serve"},
+  cmd = {"/Users/josh/.local/share/nvim/lsp_servers/go/gopls", "serve"},
   capabilities = capabilities,
 }
 
-local configs = require'lspconfig.configs'
-if not configs.helm_lint_ls then
-  configs.helm_lint_ls = {
-    default_config = {
-      cmd = {"/Users/josh/code/personal/helm-lint-ls/bin/helm_lint_ls", "serve"},
-      filetypes = {'helm', 'yaml'},
-      root_dir = function(fname)
-        return util.root_pattern('Chart.yaml')(fname)
-      end,
-    },
-  }
-end
+lspconfig.terraformls.setup {
+  cmd = { "/opt/homebrew/bin/terraform-ls", "serve" },
+  on_attach = on_attach,
+  capabilities = capabilities,
+  filetypes = { "terraform", "terraform-vars" },
+  root_dir = util.root_pattern(".terraform", ".git"),
+}
 
-lspconfig.helm_lint_ls.setup {}
+lspconfig.tflint.setup {
+  cmd = { "/Users/josh/.local/share/nvim/lsp_servers/tflint/tflint", "--langserver" },
+  on_attach = on_attach,
+  capabilities = capabilities,
+  root_dir = util.root_pattern(".terraform", ".git", ".tflint.hcl"),
+}
+
+lspconfig.helm_ls.setup {
+  settings = {
+    ['helm-ls'] = {
+      logLevel = "info",
+      valuesFiles = {
+        mainValuesFile = "values.yaml",
+        lintOverlayValuesFile = "values.lint.yaml",
+        additionalValuesFilesGlobPattern = "values*.yaml"
+      },
+      yamlls = {
+        path = "/Users/josh/.local/share/nvim/lsp_servers/yamlls/node_modules/yaml-language-server/bin/yaml-language-server",
+        enabled = true,
+        diagnosticsLimit = 50,
+        showDiagnosticsDirectly = false,
+        config = {
+          schemas = {
+            kubernetes = "templates/**",
+          },
+          completion = true,
+          hover = true,
+          -- any other config from https://github.com/redhat-developer/yaml-language-server#language-server-settings
+        }
+      }
+    }
+  }
+}
 
 lspconfig.golangci_lint_ls.setup{
   on_attach=on_attach,
   filetypes = {"go", "gomod"},
   cmd = {
-    "/Users/josh/.local/share/nvim/lsp_servers/golangci_lint_ls/golangci-lint-langserver",
+    "/Users/josh/.local/share/nvim/lsp_servers/golangci_lint_ls/golangci-lint",
   },
   capabilities = capabilities,
   init_options = {
@@ -100,31 +154,38 @@ lspconfig.golangci_lint_ls.setup{
   end,
 }
 
-lspconfig.sumneko_lua.setup {
+require'lspconfig'.lua_ls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
   cmd = {"/Users/josh/.local/share/nvim/lsp_servers/sumneko_lua/extension/server/bin/lua-language-server"};
-  settings = {
-    Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-        version = 'LuaJIT',
-        -- Setup your lua path
-        path = vim.split(package.path, ';'),
-      },
-      diagnostics = {
-        -- Get the language server to recognize the `vim` global
-        globals = {'vim'},
-      },
-      workspace = {
-        -- Make the server aware of Neovim runtime files
-        library = {
-          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-        },
-      },
-    },
-  },
+  on_init = function(client)
+    local path = client.workspace_folders[1].name
+    if not vim.loop.fs_stat(path..'/.luarc.json') and not vim.loop.fs_stat(path..'/.luarc.jsonc') then
+      client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
+        Lua = {
+          runtime = {
+            -- Tell the language server which version of Lua you're using
+            -- (most likely LuaJIT in the case of Neovim)
+            version = 'LuaJIT'
+          },
+          -- Make the server aware of Neovim runtime files
+          workspace = {
+            checkThirdParty = false,
+            library = {
+              vim.env.VIMRUNTIME
+              -- "${3rd}/luv/library"
+              -- "${3rd}/busted/library",
+            }
+            -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
+            -- library = vim.api.nvim_get_runtime_file("", true)
+          }
+        }
+      })
+
+      client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+    end
+    return true
+  end
 }
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(

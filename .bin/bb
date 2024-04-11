@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+if [[ $# -eq 1 ]]; then
+  path=$1
+else
+  items=`boundary_telescope_cmd.sh`
+  path=`echo "$items" | fzf`
+fi
+
+if [[ $path == "" ]]; then
+  echo "Nothing to do!"
+  exit
+fi
+
+session=`basename $path`
+target_id=`(echo $session | head -n1 | awk '{print $1;}')`
+port=`(echo $session | head -n1 | awk '{print $2;}')`
+echo "Listening on [http://127.0.0.1:${port}]"
+boundary connect -target-id=$target_id -format json | jq

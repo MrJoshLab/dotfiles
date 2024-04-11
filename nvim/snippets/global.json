@@ -4,5 +4,11 @@
     "body": [
       "${VIM:system('python3 -c \"import uuid, sys;sys.stdout.write(str(uuid.uuid4()))\"')}"
     ]
+  },
+  "password": {
+    "prefix": "password",
+    "body": [
+      "${VIM:system('openssl rand -base64 32')}"
+    ]
   }
 }

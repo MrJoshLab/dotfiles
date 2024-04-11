@@ -1,98 +1,123 @@
 local vim = vim
 
-local Plug = vim.fn['plug#']
-vim.call('plug#begin', '/Users/josh/.config/nvim/plugged')
+-- This file can be loaded by calling `lua require('plugins')` from your init.vim
 
-  -- colorschemes
-  Plug 'gruvbox-community/gruvbox'
-  Plug 'tjdevries/colorbuddy.nvim'
-  Plug 'norcalli/nvim-colorizer.lua'
-  Plug 'romgrk/doom-one.vim'
-  Plug 'sainnhe/edge'
-  Plug 'shinchu/lightline-gruvbox.vim'
+-- Only required if you have packer configured as `opt`
+vim.cmd [[packadd packer.nvim]]
 
-  Plug 'ryanoasis/vim-devicons'
-  Plug 'joshdick/onedark.vim'
-  Plug 'stephpy/vim-yaml'
+return require('packer').startup(function(use)
 
-  --Plug('kaicataldo/material.vim', { branch = 'main', ['do'] = function ()
-    --vim.opt.termguicolors = true
-    --vim.cmd('colorscheme material')
-  --end})
+  -- Packer can manage itself
+  use 'wbthomason/packer.nvim'
 
-  Plug('marko-cerovac/material.nvim', {branch = 'main', ['do'] = function ()
-    vim.opt.termguicolors = true
-    vim.cmd('colorscheme material')
-  end})
+  -- Github copilot plugin
+  use 'github/copilot.vim'
 
-  Plug 'rhysd/git-messenger.vim'
+  -- ColorSchemes
+  use {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  }
 
-  Plug 'preservim/nerdcommenter'
+  --use {
+    --'romgrk/doom-one.vim',
+    --config = function ()
+      --vim.cmd('colorscheme doom-one')
+    --end
+  --}
+
+  use 'sainnhe/edge'
+
+  use 'shinchu/lightline-gruvbox.vim'
+  use 'ryanoasis/vim-devicons'
+
+  -- Colors
+  use 'tjdevries/colorbuddy.nvim'
+  use 'norcalli/nvim-colorizer.lua'
+
+  use 'stephpy/vim-yaml'
+
+  use {
+    'kaicataldo/material.vim',
+    branch = 'main',
+  }
+
+  use {
+    'marko-cerovac/material.nvim',
+    branch = 'main',
+    run = ':colorscheme material',
+  }
+
+  use 'rhysd/git-messenger.vim'
+
+  use 'preservim/nerdcommenter'
 
   -- telescopic johnson
-  Plug 'nvim-lua/popup.nvim'
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim'
-  Plug 'nvim-telescope/telescope-fzy-native.nvim'
+  use 'nvim-lua/popup.nvim'
+  use 'nvim-lua/plenary.nvim'
+  use 'nvim-telescope/telescope.nvim'
+  use 'nvim-telescope/telescope-fzy-native.nvim'
 
   -- nerdtree
-  Plug 'scrooloose/nerdtree'
+  use 'scrooloose/nerdtree'
 
-  -- Plug 'mkitt/tabline.vim'
-  Plug 'tweekmonster/gofmt.vim'
+  -- use 'mkitt/tabline.vim'
+  use 'tweekmonster/gofmt.vim'
 
   -- Tree-Shitter
-  Plug('nvim-treesitter/nvim-treesitter', {['do'] = function ()
-    vim.cmd ':TSUpdate'
-  end})
-  Plug 'nvim-treesitter/playground'
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+  }
 
-  Plug 'folke/persistence.nvim'
+  use 'nvim-treesitter/playground'
 
-  --Plug('neoclide/coc.nvim', {branch = 'release'})
-  --Plug('neoclide/coc.nvim')
+  use 'folke/persistence.nvim'
 
-  Plug 'neovim/nvim-lspconfig'
-  --Plug 'kabouzeid/nvim-lspinstall'
-  Plug 'williamboman/nvim-lsp-installer'
+  use {
+    'williamboman/nvim-lsp-installer',
+    'neovim/nvim-lspconfig',
+  }
 
   -- Auto completion
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/cmp-path'
-  Plug 'hrsh7th/cmp-cmdline'
-  Plug 'hrsh7th/nvim-cmp'
+  use 'hrsh7th/cmp-nvim-lsp'
+  use 'hrsh7th/cmp-buffer'
+  use 'hrsh7th/cmp-path'
+  use 'hrsh7th/cmp-cmdline'
+  use 'hrsh7th/nvim-cmp'
 
   -- For vsnip users.
-  Plug 'hrsh7th/cmp-vsnip'
-  Plug 'hrsh7th/vim-vsnip'
+  use 'hrsh7th/cmp-vsnip'
+  use 'hrsh7th/vim-vsnip'
 
   -- For luasnip users.
-  Plug 'L3MON4D3/LuaSnip'
-  Plug 'saadparwaiz1/cmp_luasnip'
+  use 'L3MON4D3/LuaSnip'
+  use 'saadparwaiz1/cmp_luasnip'
 
   -- For ultisnips users.
-  Plug 'SirVer/ultisnips'
-  Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+  use 'SirVer/ultisnips'
+  use 'quangnguyen30192/cmp-nvim-ultisnips'
 
   -- For snippy users.
-  Plug 'dcampos/nvim-snippy'
-  Plug 'dcampos/cmp-snippy'
+  use 'dcampos/nvim-snippy'
+  use 'dcampos/cmp-snippy'
 
-  --Plug 'phaazon/hop.nvim'
+  --use 'phaazon/hop.nvim'
 
-  --Plug 'ThePrimeagen/harpoon'
+  --use 'ThePrimeagen/harpoon'
 
   -- hcl (Hashicorp Config Language) syntax hightliting
-  Plug 'b4b4r07/vim-hcl'
+  use 'b4b4r07/vim-hcl'
 
-  Plug 'tpope/vim-fugitive'
-  Plug 'TimUntersberger/neogit'
+  use 'tpope/vim-fugitive'
+  use 'TimUntersberger/neogit'
 
   -- Helm charts syntax hightliting
-  Plug 'towolf/vim-helm'
+  use 'towolf/vim-helm'
 
-  Plug 'itchyny/lightline.vim'
+  use 'itchyny/lightline.vim'
 
-vim.call('plug#end')
+end)
+

@@ -18,6 +18,11 @@ remap('', '<Left>', '<Nop>', {noremap = true})
 remap('v', 'J', ":m '>+1<CR>gv=gv", {noremap = true})
 remap('v', 'K', ":m '>-2<CR>gv=gv", {noremap = true})
 
+require('mrjosh.boundary').setup({
+  boundary_addr = "http://localhost:9200",
+  boundary_telescope_script_path = "/Users/josh/.bin/boundary_telescope_cmd.sh",
+})
+
 -- Telescope
 remap('n', '<C-p>', ":lua require('mrjosh.telescope').search_files()<CR>", {noremap = true})
 remap('n', '<leader>vrc', ":lua require('mrjosh.telescope').search_dotfiles()<CR>", {noremap = true})
@@ -25,6 +30,7 @@ remap('n', '<leader>ghg', ":lua require('mrjosh.gists').gists()<CR>", {noremap =
 remap('n', '<leader>gc', ":lua require('telescope.builtin').git_commits()<CR>", {noremap = true})
 remap('n', '<leader>pb', ":lua require('telescope.builtin').buffers()<CR>", {noremap = true})
 remap('n', '<leader>ps', ":lua require('mrjosh.telescope').live_grep()<CR>", {noremap = true})
+remap('n', '<leader>b', ":lua require('mrjosh.boundary').targets()<CR>", {noremap = true})
 
 -- LSP
 local opts = { noremap=true, silent=true }

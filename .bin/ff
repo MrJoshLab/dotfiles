@@ -3,7 +3,7 @@
 ## I yoinked this file from ThePrimeagen =)
 # You can check it out here 
 #
-# https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/bin/tmux-sessionizer
+# https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/scripts/tmux-sessionizer
 
 if [[ $# -eq 1 ]]; then
   path=$1

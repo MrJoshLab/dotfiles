@@ -1,0 +1,78 @@
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.bright]
+black = "0x363a4e"
+blue = "0x6cb6eb"
+cyan = "0x5dbbc1"
+green = "0xa0c980"
+magenta = "0xd38aea"
+red = "0xec7279"
+white = "0xc5cdd9"
+yellow = "0xdeb974"
+
+[colors.normal]
+black = "0x363a4e"
+blue = "0x6cb6eb"
+cyan = "0x5dbbc1"
+green = "0xa0c980"
+magenta = "0xd38aea"
+red = "0xec7279"
+white = "0xc5cdd9"
+yellow = "0xdeb974"
+
+[colors.primary]
+background = "#0f111a"
+foreground = "#8f93a2"
+
+[colors.selection]
+background = "0xdc3232"
+text = "0xffffff"
+
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+[font]
+size = 14.4
+
+[font.bold]
+family = "Liga SFMono Nerd Font"
+style = "Bold"
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+[font.italic]
+family = "Liga SFMono Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "Liga SFMono Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 0
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "N"
+mods = "Control"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window]
+decorations = "none"
+startup_mode = "Maximized"
+
+[window.dimensions]
+columns = 140
+lines = 38
+
+[window.padding]
+x = 5
+y = 5
